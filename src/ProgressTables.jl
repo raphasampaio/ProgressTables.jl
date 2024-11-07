@@ -1,0 +1,3 @@
+module Template
+
+end
