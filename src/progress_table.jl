@@ -68,9 +68,6 @@ struct ProgressTable <: AbstractProgressTable
             push!(prefix_spacing, remaining - suffix_spacing[i])
         end
 
-        @show prefix_spacing
-        @show suffix_spacing
-
         return new(
             header,
             widths,
