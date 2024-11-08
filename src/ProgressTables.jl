@@ -79,6 +79,7 @@ struct ProgressTable <: AbstractProgressTable
             header,
             widths,
             [Printf.Format(fmt) for fmt in format],
+            border,
             header_bold,
             header_italic,
             header_underline,

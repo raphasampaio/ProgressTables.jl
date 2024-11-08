@@ -15,6 +15,7 @@ function test_all()
         widths = [10, 8, 16],
         format = ["%d", "%.2f", "%.3e"],
         color = [:normal, :normal, :green],
+        border = false,
     )
 
     initialize!(pt)
