@@ -8,15 +8,6 @@
 
 ProgressTables.jl is a Julia package designed to display progress and track values in the form of visually appealing tables. It is ideal for use in tasks such as training machine learning models, monitoring simulations, or simply displaying iterative computations in a clean, tabular format. The package supports customizable table headers, column widths, data formatting, colors, alignment, and borders, providing full flexibility to suit various needs.
 
-## Features
-
-- Customizable Headers: Define headers for each column to describe the data.
-- Flexible Column Widths: Adjust column widths to fit your data appropriately.
-- Data Formatting: Format data using custom number formats (e.g., floating-point precision, scientific notation).
-- Color Support: Highlight specific columns or values with different colors for easier readability.
-- Border Styling: Add borders to separate rows and columns, making tables more distinct.
-- Alignment Control: Align data to the left, right, or center in each column for better organization.
-
 ## Getting Started
 
 ### Installation
