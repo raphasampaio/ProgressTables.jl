@@ -106,17 +106,14 @@ function initialize!(progress_table::ProgressTable)
 
     if progress_table.border
         print("┌")
-    end
+        for (i, width) in enumerate(progress_table.widths)
+            print("─"^width)
 
-    for (i, width) in enumerate(progress_table.widths)
-        print("─"^width)
-
-        if i != size
-            print("┬")
+            if i != size
+                print("┬")
+            end
         end
-    end
 
-    if progress_table.border
         println("┐")
         print("│")
     end
@@ -143,6 +140,8 @@ function initialize!(progress_table::ProgressTable)
     if progress_table.border
         println("│")
         print("├")
+    else
+        println()
     end
 
     for (i, width) in enumerate(progress_table.widths)
@@ -155,6 +154,8 @@ function initialize!(progress_table::ProgressTable)
 
     if progress_table.border
         println("┤")
+    else
+        println()
     end
 
     return nothing
@@ -166,7 +167,7 @@ function next!(progress_table::ProgressTable, row::Vector)
     @assert length(row) == size
 
     if progress_table.border
-    print("│")
+        print("│")
     end
 
     for (i, value) in enumerate(row)
@@ -177,7 +178,7 @@ function next!(progress_table::ProgressTable, row::Vector)
 
         print(" "^prefix_spacing)
         printstyled(
-            string, 
+            string,
             bold = progress_table.bold[i],
             italic = progress_table.italic[i],
             underline = progress_table.underline[i],
@@ -189,12 +190,14 @@ function next!(progress_table::ProgressTable, row::Vector)
         print(" "^suffix_spacing)
 
         if i != size
-        print("│")
+            print("│")
         end
     end
 
     if progress_table.border
-    println("│")
+        println("│")
+    else
+        println()
     end
 
     return nothing
@@ -204,18 +207,17 @@ function finalize!(progress_table::ProgressTable)
     size = length(progress_table.widths)
 
     if progress_table.border
-    print("└")
-    end
-    for (i, width) in enumerate(progress_table.widths)
-        print("─"^width)
+        print("└")
 
-        if i != size
-            print("┴")
+        for (i, width) in enumerate(progress_table.widths)
+            print("─"^width)
+
+            if i != size
+                print("┴")
+            end
         end
-    end
 
-    if progress_table.border
-    println("┘")
+        println("┘")
     end
 
     return nothing
