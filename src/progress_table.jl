@@ -96,11 +96,12 @@ struct ProgressTable <: AbstractProgressTable
     end
 end
 
-initialize!(progress_table::ProgressTable) = initialize!(stdout, progress_table)
-next!(progress_table::ProgressTable, row::Vector) = next!(stdout, progress_table, row)
-finalize!(progress_table::ProgressTable) = finalize!(stdout, progress_table)
+initialize(progress_table::ProgressTable) = initialize(stdout, progress_table)
+next(progress_table::ProgressTable, row::Vector) = next(stdout, progress_table, row)
+separator(progress_table::ProgressTable) = separator(stdout, progress_table)
+Base.finalize(progress_table::ProgressTable) = finalize(stdout, progress_table)
 
-function initialize!(io::IO, progress_table::ProgressTable)
+function initialize(io::IO, progress_table::ProgressTable)
     size = length(progress_table.widths)
 
     if progress_table.border
@@ -154,22 +155,16 @@ function initialize!(io::IO, progress_table::ProgressTable)
 
     if progress_table.border
         println(io, "│")
-        print(io, "├")
-        for (i, width) in enumerate(progress_table.widths)
-            print(io, "─"^width)
-            if i != size
-                print(io, "┼")
-            end
-        end
-        println(io, "┤")
     else
         println(io)
     end
 
+    separator(io, progress_table)
+
     return nothing
 end
 
-function next!(io::IO, progress_table::ProgressTable, row::Vector)
+function next(io::IO, progress_table::ProgressTable, row::AbstractVector)
     size = length(progress_table.widths)
 
     @assert length(row) == size
@@ -233,7 +228,30 @@ function next!(io::IO, progress_table::ProgressTable, row::Vector)
     return nothing
 end
 
-function finalize!(io::IO, progress_table::ProgressTable)
+function separator(io::IO, progress_table::ProgressTable)
+    size = length(progress_table.widths)
+
+    if progress_table.border
+        print(io, "├")
+    end
+
+    for (i, width) in enumerate(progress_table.widths)
+        print(io, "─"^width)
+        if i != size
+            print(io, "┼")
+        end
+    end
+
+    if progress_table.border
+        println(io, "┤")
+    else
+        println(io)
+    end
+
+    return nothing
+end
+
+function Base.finalize(io::IO, progress_table::ProgressTable)
     size = length(progress_table.widths)
 
     if progress_table.border

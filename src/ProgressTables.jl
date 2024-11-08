@@ -3,9 +3,10 @@ module ProgressTables
 using Printf
 
 export ProgressTable,
-    initialize!,
-    next!,
-    finalize!
+    initialize,
+    next,
+    separator,
+    finalize
 
 include("abstract.jl")
 include("progress_table.jl")

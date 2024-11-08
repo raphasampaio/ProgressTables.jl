@@ -30,20 +30,26 @@ pt = ProgressTable(
     alignment = [:right, :center, :center],
 )
 
-initialize!(pt)
-for epoch in 1:3
-    next!(pt, [epoch, 1 / epoch, epoch * 0.1])
+initialize(pt)
+for epoch in 1:4
+    next(pt, [epoch, 1 / epoch, epoch * 0.1])
+
+    if epoch == 2
+        separator(pt)
+    end
 end
-finalize!(pt)
+finalize(pt)
 ```
 
 ```console
 ┌──────────┬────────┬────────────────┐
 │   Epoch  │  Loss  │    Accuracy    │
 ├──────────┼────────┼────────────────┤
-│        1 │  1.00  │    1.000e-01   │
-│        2 │  0.50  │    2.000e-01   │
-│        3 │  0.33  │    3.000e-01   │
+│        1 │  1.00  │ 1.000e-01      │
+│        2 │  0.50  │ 2.000e-01      │
+├──────────┼────────┼────────────────┤
+│        3 │  0.33  │ 3.000e-01      │
+│        4 │  0.25  │ 4.000e-01      │
 └──────────┴────────┴────────────────┘
 ```
 
