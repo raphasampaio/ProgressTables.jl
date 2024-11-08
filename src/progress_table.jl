@@ -6,7 +6,7 @@ struct ProgressTable <: AbstractProgressTable
 
     header_alignment::Vector{Symbol}
     header_bold::Vector{Bool}
-    header_italic::Vector{Bool}
+    # header_italic::Vector{Bool}
     header_underline::Vector{Bool}
     header_blink::Vector{Bool}
     header_reverse::Vector{Bool}
@@ -15,7 +15,7 @@ struct ProgressTable <: AbstractProgressTable
 
     alignment::Vector{Symbol}
     bold::Vector{Bool}
-    italic::Vector{Bool}
+    # italic::Vector{Bool}
     underline::Vector{Bool}
     blink::Vector{Bool}
     reverse::Vector{Bool}
@@ -33,7 +33,7 @@ struct ProgressTable <: AbstractProgressTable
         border::Bool = true,
         header_alignment::Vector{Symbol} = [:center for _ in header],
         header_bold::Vector{Bool} = [true for _ in header],
-        header_italic::Vector{Bool} = [false for _ in header],
+        # header_italic::Vector{Bool} = [false for _ in header],
         header_underline::Vector{Bool} = [false for _ in header],
         header_blink::Vector{Bool} = [false for _ in header],
         header_reverse::Vector{Bool} = [false for _ in header],
@@ -41,7 +41,7 @@ struct ProgressTable <: AbstractProgressTable
         header_color::Vector{Symbol} = [:normal for _ in header],
         alignment::Vector{Symbol} = [:center for _ in header],
         bold::Vector{Bool} = [false for _ in header],
-        italic::Vector{Bool} = [false for _ in header],
+        # italic::Vector{Bool} = [false for _ in header],
         underline::Vector{Bool} = [false for _ in header],
         blink::Vector{Bool} = [false for _ in header],
         reverse::Vector{Bool} = [false for _ in header],
@@ -75,7 +75,7 @@ struct ProgressTable <: AbstractProgressTable
             border,
             header_alignment,
             header_bold,
-            header_italic,
+            # header_italic,
             header_underline,
             header_blink,
             header_reverse,
@@ -83,7 +83,7 @@ struct ProgressTable <: AbstractProgressTable
             header_color,
             alignment,
             bold,
-            italic,
+            # italic,
             underline,
             blink,
             reverse,
@@ -121,15 +121,29 @@ function initialize!(io::IO, progress_table::ProgressTable)
 
         if alignment == :left
             print(io, " ")
-            print(io, column)
-            print(io, " "^(width - length(column) - 1))
         elseif alignment == :right
             print(io, " "^(width - length(column) - 1))
-            print(io, column)
-            print(io, " ")
         else
             print(io, " "^progress_table.prefix_spacing[i])
-            print(io, column)
+        end
+
+        printstyled(
+            io,
+            column, 
+            bold = progress_table.header_bold[i],
+            # italic = progress_table.header_italic[i],
+            underline = progress_table.header_underline[i],
+            blink = progress_table.header_blink[i],
+            reverse = progress_table.header_reverse[i],
+            hidden = progress_table.header_hidden[i],
+            color = progress_table.header_color[i],
+        )
+
+        if alignment == :left
+            print(io, " "^(width - length(column) - 1))
+        elseif alignment == :right
+            print(io, " ")
+        else
             print(io, " "^progress_table.suffix_spacing[i])
         end
 
@@ -173,18 +187,35 @@ function next!(io::IO, progress_table::ProgressTable, row::Vector)
 
         if alignment == :left
             print(io, " ")
-            print(io, string)
-            print(io, " "^(width - length(string) - 1))
         elseif alignment == :right
             print(io, " "^(width - length(string) - 1))
-            print(io, string)
-            print(io, " ")
         else
             remaining = width - length(string)
             suffix_spacing = floor(Int, remaining / 2)
             prefix_spacing = width - length(string) - suffix_spacing
             print(io, " "^prefix_spacing)
-            print(io, string)
+        end
+
+        printstyled(
+            io,
+            string, 
+            bold = progress_table.bold[i],
+            # italic = progress_table.italic[i],
+            underline = progress_table.underline[i],
+            blink = progress_table.blink[i],
+            reverse = progress_table.reverse[i],
+            hidden = progress_table.hidden[i],
+            color = progress_table.color[i],
+        )
+
+        if alignment == :left
+            print(io, " "^(width - length(string) - 1))
+        elseif alignment == :right
+            print(io, " ")
+        else
+            remaining = width - length(string)
+            suffix_spacing = floor(Int, remaining / 2)
+            prefix_spacing = width - length(string) - suffix_spacing
             print(io, " "^suffix_spacing)
         end
 
