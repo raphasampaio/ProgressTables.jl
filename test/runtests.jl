@@ -10,6 +10,7 @@ function test_all()
         test_aqua()
     end
 
+    for border in [false, true]
     io = IOBuffer()
 
     pt = ProgressTable(
@@ -17,7 +18,7 @@ function test_all()
         widths = [10, 8, 16],
         format = ["%d", "%.2f", "%.3e"],
         color = [:normal, :normal, :blue],
-        border = false,
+        border = border,
     )
 
     initialize!(io, pt)
@@ -26,12 +27,24 @@ function test_all()
     end
     finalize!(io, pt)
 
+    if border
+        @test String(take!(io)) == 
+        "┌──────────┬────────┬────────────────┐\n" * 
+        "│   Epoch  │  Loss  │    Accuracy    │\n" * 
+        "├──────────┼────────┼────────────────┤\n" * 
+        "│     1    │  1.00  │    1.000e-01   │\n" * 
+        "│     2    │  0.50  │    2.000e-01   │\n" * 
+        "│     3    │  0.33  │    3.000e-01   │\n" * 
+        "└──────────┴────────┴────────────────┘\n"
+    else
     @test String(take!(io)) == 
-    "   Epoch  │  Loss  │    Accuracy    " * 
-    "──────────┼────────┼────────────────" * 
-    "     1    │  1.00  │    1.000e-01   " * 
-    "     2    │  0.50  │    2.000e-01   " * 
-    "     3    │  0.33  │    3.000e-01   "
+    "   Epoch  │  Loss  │    Accuracy    \n" * 
+    "──────────┼────────┼────────────────\n" * 
+    "     1    │  1.00  │    1.000e-01   \n" * 
+    "     2    │  0.50  │    2.000e-01   \n" * 
+    "     3    │  0.33  │    3.000e-01   \n"
+    end
+end
 
     return nothing
 end

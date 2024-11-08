@@ -136,7 +136,7 @@ function initialize!(io::IO, progress_table::ProgressTable)
         println(io, "│")
         print(io, "├")
     else
-        println()
+        println(io)
     end
 
     for (i, width) in enumerate(progress_table.widths)
@@ -150,7 +150,7 @@ function initialize!(io::IO, progress_table::ProgressTable)
     if progress_table.border
         println(io, "┤")
     else
-        println()
+        println(io)
     end
 
     return nothing
@@ -193,7 +193,7 @@ function next!(io::IO, progress_table::ProgressTable, row::Vector)
     if progress_table.border
         println(io, "│")
     else
-        println()
+        println(io)
     end
 
     return nothing
