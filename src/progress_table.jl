@@ -97,7 +97,7 @@ struct ProgressTable <: AbstractProgressTable
 end
 
 initialize(progress_table::ProgressTable) = initialize(stdout, progress_table)
-next(progress_table::ProgressTable, row::Vector) = next(stdout, progress_table, row)
+next(progress_table::ProgressTable, row::AbstractVector; kwargs...) = next(stdout, progress_table, row; kwargs...)
 separator(progress_table::ProgressTable) = separator(stdout, progress_table)
 Base.finalize(progress_table::ProgressTable) = finalize(stdout, progress_table)
 
@@ -164,7 +164,19 @@ function initialize(io::IO, progress_table::ProgressTable)
     return nothing
 end
 
-function next(io::IO, progress_table::ProgressTable, row::AbstractVector)
+function next(
+    io::IO,
+    progress_table::ProgressTable,
+    row::AbstractVector;
+    alignment::Vector{Symbol} = progress_table.alignment,
+    bold::Vector{Bool} = progress_table.bold,
+    # italic::Vector{Bool} = progress_table.italic,
+    underline::Vector{Bool} = progress_table.underline,
+    blink::Vector{Bool} = progress_table.blink,
+    reverse::Vector{Bool} = progress_table.reverse,
+    hidden::Vector{Bool} = progress_table.hidden,
+    color::Vector{Symbol} = progress_table.color,
+)
     size = length(progress_table.widths)
 
     @assert length(row) == size
@@ -178,11 +190,10 @@ function next(io::IO, progress_table::ProgressTable, row::AbstractVector)
         string = Printf.format(format, value)
 
         width = progress_table.widths[i]
-        alignment = progress_table.alignment[i]
 
-        if alignment == :left
+        if alignment[i] == :left
             print(io, " ")
-        elseif alignment == :right
+        elseif alignment[i] == :right
             print(io, " "^(width - length(string) - 1))
         else
             remaining = width - length(string)
@@ -194,18 +205,18 @@ function next(io::IO, progress_table::ProgressTable, row::AbstractVector)
         printstyled(
             io,
             string,
-            bold = progress_table.bold[i],
-            # italic = progress_table.italic[i],
-            underline = progress_table.underline[i],
-            blink = progress_table.blink[i],
-            reverse = progress_table.reverse[i],
-            hidden = progress_table.hidden[i],
-            color = progress_table.color[i],
+            bold = bold[i],
+            # italic = italic[i],
+            underline = underline[i],
+            blink = blink[i],
+            reverse = reverse[i],
+            hidden = hidden[i],
+            color = color[i],
         )
 
-        if alignment == :left
+        if alignment[i] == :left
             print(io, " "^(width - length(string) - 1))
-        elseif alignment == :right
+        elseif alignment[i] == :right
             print(io, " ")
         else
             remaining = width - length(string)

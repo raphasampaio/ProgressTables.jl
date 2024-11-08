@@ -30,8 +30,10 @@ pt = ProgressTable(
     alignment = [:right, :center, :center],
 )
 
+epochs = 4
+
 initialize(pt)
-for epoch in 1:4
+for epoch in 1:epochs
     next(pt, [epoch, 1 / epoch, epoch * 0.1])
 
     if epoch == 2
