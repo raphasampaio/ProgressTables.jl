@@ -115,7 +115,7 @@ function initialize!(io::IO, progress_table::ProgressTable)
     for (i, column) in enumerate(progress_table.header)
         print(io, " "^progress_table.prefix_spacing[i])
         printstyled(
-            io, 
+            io,
             column,
             bold = progress_table.header_bold[i],
             italic = progress_table.header_italic[i],
