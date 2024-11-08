@@ -4,6 +4,7 @@ struct ProgressTable <: AbstractProgressTable
     format::Vector{Printf.Format}
     border::Bool
 
+    header_alignment::Vector{Symbol}
     header_bold::Vector{Bool}
     header_italic::Vector{Bool}
     header_underline::Vector{Bool}
@@ -12,6 +13,7 @@ struct ProgressTable <: AbstractProgressTable
     header_hidden::Vector{Bool}
     header_color::Vector{Symbol}
 
+    alignment::Vector{Symbol}
     bold::Vector{Bool}
     italic::Vector{Bool}
     underline::Vector{Bool}
@@ -29,6 +31,7 @@ struct ProgressTable <: AbstractProgressTable
         widths::Vector{Int} = [length(column) + 2 for column in header],
         format::Vector{String} = ["%f" for _ in header],
         border::Bool = true,
+        header_alignment::Vector{Symbol} = [:center for _ in header],
         header_bold::Vector{Bool} = [true for _ in header],
         header_italic::Vector{Bool} = [false for _ in header],
         header_underline::Vector{Bool} = [false for _ in header],
@@ -36,6 +39,7 @@ struct ProgressTable <: AbstractProgressTable
         header_reverse::Vector{Bool} = [false for _ in header],
         header_hidden::Vector{Bool} = [false for _ in header],
         header_color::Vector{Symbol} = [:normal for _ in header],
+        alignment::Vector{Symbol} = [:center for _ in header],
         bold::Vector{Bool} = [false for _ in header],
         italic::Vector{Bool} = [false for _ in header],
         underline::Vector{Bool} = [false for _ in header],
@@ -55,7 +59,7 @@ struct ProgressTable <: AbstractProgressTable
         suffix_spacing = Vector{Int}()
         for i in 1:size
             remaining = widths[i] - length(header[i])
-            push!(suffix_spacing, remaining ÷ 2)
+            push!(suffix_spacing, floor(Int, remaining / 2))
         end
 
         prefix_spacing = Vector{Int}()
@@ -64,11 +68,15 @@ struct ProgressTable <: AbstractProgressTable
             push!(prefix_spacing, remaining - suffix_spacing[i])
         end
 
+        @show prefix_spacing
+        @show suffix_spacing
+
         return new(
             header,
             widths,
             [Printf.Format(fmt) for fmt in format],
             border,
+            header_alignment,
             header_bold,
             header_italic,
             header_underline,
@@ -76,6 +84,7 @@ struct ProgressTable <: AbstractProgressTable
             header_reverse,
             header_hidden,
             header_color,
+            alignment,
             bold,
             italic,
             underline,
@@ -99,33 +108,33 @@ function initialize!(io::IO, progress_table::ProgressTable)
 
     if progress_table.border
         print(io, "┌")
-
         for (i, width) in enumerate(progress_table.widths)
             print(io, "─"^width)
-
             if i != size
                 print(io, "┬")
             end
         end
-
         println(io, "┐")
         print(io, "│")
     end
 
     for (i, column) in enumerate(progress_table.header)
-        print(io, " "^progress_table.prefix_spacing[i])
-        printstyled(
-            io,
-            column,
-            bold = progress_table.header_bold[i],
-            italic = progress_table.header_italic[i],
-            underline = progress_table.header_underline[i],
-            blink = progress_table.header_blink[i],
-            reverse = progress_table.header_reverse[i],
-            hidden = progress_table.header_hidden[i],
-            color = progress_table.header_color[i],
-        )
-        print(io, " "^progress_table.suffix_spacing[i])
+        width = progress_table.widths[i]
+        alignment = progress_table.header_alignment[i]
+
+        if alignment == :left
+            print(io, " ")
+            print(io, column)
+            print(io, " "^(width - length(column) - 1))
+        elseif alignment == :right
+            print(io, " "^(width - length(column) - 1))
+            print(io, column)
+            print(io, " ")
+        else
+            print(io, " "^progress_table.prefix_spacing[i])
+            print(io, column)
+            print(io, " "^progress_table.suffix_spacing[i])
+        end
 
         if i != size
             print(io, "│")
@@ -135,19 +144,12 @@ function initialize!(io::IO, progress_table::ProgressTable)
     if progress_table.border
         println(io, "│")
         print(io, "├")
-    else
-        println(io)
-    end
-
-    for (i, width) in enumerate(progress_table.widths)
-        print(io, "─"^width)
-
-        if i != size
-            print(io, "┼")
+        for (i, width) in enumerate(progress_table.widths)
+            print(io, "─"^width)
+            if i != size
+                print(io, "┼")
+            end
         end
-    end
-
-    if progress_table.border
         println(io, "┤")
     else
         println(io)
@@ -168,22 +170,26 @@ function next!(io::IO, progress_table::ProgressTable, row::Vector)
     for (i, value) in enumerate(row)
         format = progress_table.format[i]
         string = Printf.format(format, value)
-        suffix_spacing = (progress_table.widths[i] - length(string)) ÷ 2
-        prefix_spacing = progress_table.widths[i] - length(string) - suffix_spacing
 
-        print(io, " "^prefix_spacing)
-        printstyled(
-            io,
-            string,
-            bold = progress_table.bold[i],
-            italic = progress_table.italic[i],
-            underline = progress_table.underline[i],
-            blink = progress_table.blink[i],
-            reverse = progress_table.reverse[i],
-            hidden = progress_table.hidden[i],
-            color = progress_table.color[i],
-        )
-        print(io, " "^suffix_spacing)
+        width = progress_table.widths[i]
+        alignment = progress_table.alignment[i]
+
+        if alignment == :left
+            print(io, " ")
+            print(io, string)
+            print(io, " "^(width - length(string) - 1))
+        elseif alignment == :right
+            print(io, " "^(width - length(string) - 1))
+            print(io, string)
+            print(io, " ")
+        else
+            remaining = width - length(string)
+            suffix_spacing = floor(Int, remaining / 2)
+            prefix_spacing = width - length(string) - suffix_spacing
+            print(io, " "^prefix_spacing)
+            print(io, string)
+            print(io, " "^suffix_spacing)
+        end
 
         if i != size
             print(io, "│")

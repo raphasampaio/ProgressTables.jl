@@ -19,6 +19,7 @@ function test_all()
             format = ["%d", "%.2f", "%.3e"],
             color = [:normal, :normal, :blue],
             border = border,
+                alignment = [:right, :center, :left],
         )
 
         initialize!(io, pt)
@@ -28,21 +29,9 @@ function test_all()
         finalize!(io, pt)
 
         if border
-            @test String(take!(io)) ==
-                  "┌──────────┬────────┬────────────────┐\n" *
-                  "│   Epoch  │  Loss  │    Accuracy    │\n" *
-                  "├──────────┼────────┼────────────────┤\n" *
-                  "│     1    │  1.00  │    1.000e-01   │\n" *
-                  "│     2    │  0.50  │    2.000e-01   │\n" *
-                  "│     3    │  0.33  │    3.000e-01   │\n" *
-                  "└──────────┴────────┴────────────────┘\n"
+            @test String(take!(io)) == "┌──────────┬────────┬────────────────┐\n│   Epoch  │  Loss  │    Accuracy    │\n├──────────┼────────┼────────────────┤\n│        1 │  1.00  │ 1.000e-01      │\n│        2 │  0.50  │ 2.000e-01      │\n│        3 │  0.33  │ 3.000e-01      │\n└──────────┴────────┴────────────────┘\n"
         else
-            @test String(take!(io)) ==
-                  "   Epoch  │  Loss  │    Accuracy    \n" *
-                  "──────────┼────────┼────────────────\n" *
-                  "     1    │  1.00  │    1.000e-01   \n" *
-                  "     2    │  0.50  │    2.000e-01   \n" *
-                  "     3    │  0.33  │    3.000e-01   \n"
+            @test String(take!(io)) =="   Epoch  │  Loss  │    Accuracy    \n        1 │  1.00  │ 1.000e-01      \n        2 │  0.50  │ 2.000e-01      \n        3 │  0.33  │ 3.000e-01      \n"
         end
     end
 
