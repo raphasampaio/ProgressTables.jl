@@ -19,6 +19,7 @@ function test_all()
             format = ["%d", "%.2f", "%.3e"],
             color = [:normal, :normal, :blue],
             border = border,
+            header_alignment = [:right, :center, :left],
             alignment = [:right, :center, :left],
         )
 
@@ -30,10 +31,10 @@ function test_all()
 
         if border
             @test String(take!(io)) ==
-                  "┌──────────┬────────┬────────────────┐\n│   Epoch  │  Loss  │    Accuracy    │\n├──────────┼────────┼────────────────┤\n│        1 │  1.00  │ 1.000e-01      │\n│        2 │  0.50  │ 2.000e-01      │\n│        3 │  0.33  │ 3.000e-01      │\n└──────────┴────────┴────────────────┘\n"
+                  "┌──────────┬────────┬────────────────┐\n│    Epoch │  Loss  │ Accuracy       │\n├──────────┼────────┼────────────────┤\n│        1 │  1.00  │ 1.000e-01      │\n│        2 │  0.50  │ 2.000e-01      │\n│        3 │  0.33  │ 3.000e-01      │\n└──────────┴────────┴────────────────┘\n"
         else
             @test String(take!(io)) ==
-                  "   Epoch  │  Loss  │    Accuracy    \n        1 │  1.00  │ 1.000e-01      \n        2 │  0.50  │ 2.000e-01      \n        3 │  0.33  │ 3.000e-01      \n"
+                  "    Epoch │  Loss  │ Accuracy       \n        1 │  1.00  │ 1.000e-01      \n        2 │  0.50  │ 2.000e-01      \n        3 │  0.33  │ 3.000e-01      \n"
         end
     end
 
