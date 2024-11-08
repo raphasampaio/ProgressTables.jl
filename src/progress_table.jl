@@ -129,7 +129,7 @@ function initialize!(io::IO, progress_table::ProgressTable)
 
         printstyled(
             io,
-            column, 
+            column,
             bold = progress_table.header_bold[i],
             # italic = progress_table.header_italic[i],
             underline = progress_table.header_underline[i],
@@ -198,7 +198,7 @@ function next!(io::IO, progress_table::ProgressTable, row::Vector)
 
         printstyled(
             io,
-            string, 
+            string,
             bold = progress_table.bold[i],
             # italic = progress_table.italic[i],
             underline = progress_table.underline[i],
