@@ -90,26 +90,32 @@ struct ProgressTable <: AbstractProgressTable
     end
 end
 
-function initialize!(progress_table::ProgressTable)
+initialize!(progress_table::ProgressTable) = initialize!(stdout, progress_table)
+next!(progress_table::ProgressTable, row::Vector) = next!(stdout, progress_table, row)
+finalize!(progress_table::ProgressTable) = finalize!(stdout, progress_table)
+
+function initialize!(io::IO, progress_table::ProgressTable)
     size = length(progress_table.widths)
 
     if progress_table.border
-        print("┌")
+        print(io, "┌")
+
         for (i, width) in enumerate(progress_table.widths)
-            print("─"^width)
+            print(io, "─"^width)
 
             if i != size
-                print("┬")
+                print(io, "┬")
             end
         end
 
-        println("┐")
-        print("│")
+        println(io, "┐")
+        print(io, "│")
     end
 
     for (i, column) in enumerate(progress_table.header)
-        print(" "^progress_table.prefix_spacing[i])
+        print(io, " "^progress_table.prefix_spacing[i])
         printstyled(
+            io, 
             column,
             bold = progress_table.header_bold[i],
             italic = progress_table.header_italic[i],
@@ -119,30 +125,30 @@ function initialize!(progress_table::ProgressTable)
             hidden = progress_table.header_hidden[i],
             color = progress_table.header_color[i],
         )
-        print(" "^progress_table.suffix_spacing[i])
+        print(io, " "^progress_table.suffix_spacing[i])
 
         if i != size
-            print("│")
+            print(io, "│")
         end
     end
 
     if progress_table.border
-        println("│")
-        print("├")
+        println(io, "│")
+        print(io, "├")
     else
         println()
     end
 
     for (i, width) in enumerate(progress_table.widths)
-        print("─"^width)
+        print(io, "─"^width)
 
         if i != size
-            print("┼")
+            print(io, "┼")
         end
     end
 
     if progress_table.border
-        println("┤")
+        println(io, "┤")
     else
         println()
     end
@@ -150,13 +156,13 @@ function initialize!(progress_table::ProgressTable)
     return nothing
 end
 
-function next!(progress_table::ProgressTable, row::Vector)
+function next!(io::IO, progress_table::ProgressTable, row::Vector)
     size = length(progress_table.widths)
 
     @assert length(row) == size
 
     if progress_table.border
-        print("│")
+        print(io, "│")
     end
 
     for (i, value) in enumerate(row)
@@ -165,8 +171,9 @@ function next!(progress_table::ProgressTable, row::Vector)
         suffix_spacing = (progress_table.widths[i] - length(string)) ÷ 2
         prefix_spacing = progress_table.widths[i] - length(string) - suffix_spacing
 
-        print(" "^prefix_spacing)
+        print(io, " "^prefix_spacing)
         printstyled(
+            io,
             string,
             bold = progress_table.bold[i],
             italic = progress_table.italic[i],
@@ -176,15 +183,15 @@ function next!(progress_table::ProgressTable, row::Vector)
             hidden = progress_table.hidden[i],
             color = progress_table.color[i],
         )
-        print(" "^suffix_spacing)
+        print(io, " "^suffix_spacing)
 
         if i != size
-            print("│")
+            print(io, "│")
         end
     end
 
     if progress_table.border
-        println("│")
+        println(io, "│")
     else
         println()
     end
@@ -192,21 +199,21 @@ function next!(progress_table::ProgressTable, row::Vector)
     return nothing
 end
 
-function finalize!(progress_table::ProgressTable)
+function finalize!(io::IO, progress_table::ProgressTable)
     size = length(progress_table.widths)
 
     if progress_table.border
-        print("└")
+        print(io, "└")
 
         for (i, width) in enumerate(progress_table.widths)
-            print("─"^width)
+            print(io, "─"^width)
 
             if i != size
-                print("┴")
+                print(io, "┴")
             end
         end
 
-        println("┘")
+        println(io, "┘")
     end
 
     return nothing
