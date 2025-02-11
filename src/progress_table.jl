@@ -63,27 +63,25 @@ struct ProgressTable <: AbstractProgressTable
 
         style = (
             header = Style(
-            alignment = header_alignment,
-            bold = header_bold,
-            italic = header_italic,
-            underline = header_underline,
-            blink = header_blink,
-            reverse = header_reverse,
-            hidden = header_hidden,
-            color = header_color,
-        ),
-
-
-        body = Style(
-            alignment = alignment,
-            bold = bold,
-            italic = italic,
-            underline = underline,
-            blink = blink,
-            reverse = reverse,
-            hidden = hidden,
-            color = color,
-        )
+                alignment = header_alignment,
+                bold = header_bold,
+                italic = header_italic,
+                underline = header_underline,
+                blink = header_blink,
+                reverse = header_reverse,
+                hidden = header_hidden,
+                color = header_color,
+            ),
+            body = Style(
+                alignment = alignment,
+                bold = bold,
+                italic = italic,
+                underline = underline,
+                blink = blink,
+                reverse = reverse,
+                hidden = hidden,
+                color = color,
+            ),
         )
 
         return new(
