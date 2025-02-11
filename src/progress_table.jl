@@ -1,4 +1,4 @@
-Base.@kwdef struct Style
+@kwdef struct Style
     alignment::Vector{Symbol}
     bold::Vector{Bool}
     italic::Vector{Bool}
