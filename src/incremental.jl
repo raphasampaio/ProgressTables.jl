@@ -7,6 +7,7 @@ struct IncrementalProgressTable <: AbstractProgressTable
     width::Int
     prefix_spacing::Vector{Int}
     suffix_spacing::Vector{Int}
+    separator::String
 
     function IncrementalProgressTable(;
         header::Vector{String},
@@ -73,6 +74,22 @@ struct IncrementalProgressTable <: AbstractProgressTable
             ),
         )
 
+        separator_io = IOBuffer()
+        if border
+            print(separator_io, "├")
+        end
+        for (i, width) in enumerate(widths)
+            print(separator_io, "─"^width)
+            if i != size
+                print(separator_io, "┼")
+            end
+        end
+        if border
+            println(separator_io, "┤")
+        else
+            println(separator_io)
+        end
+
         return new(
             header,
             widths,
@@ -82,6 +99,7 @@ struct IncrementalProgressTable <: AbstractProgressTable
             width,
             prefix_spacing,
             suffix_spacing,
+            String(take!(separator_io))
         )
     end
 end
@@ -225,25 +243,7 @@ function next(
 end
 
 function separator(io::IO, progress_table::IncrementalProgressTable)
-    size = length(progress_table.widths)
-
-    if progress_table.border
-        print(io, "├")
-    end
-
-    for (i, width) in enumerate(progress_table.widths)
-        print(io, "─"^width)
-        if i != size
-            print(io, "┼")
-        end
-    end
-
-    if progress_table.border
-        println(io, "┤")
-    else
-        println(io)
-    end
-
+    print(io, progress_table.separator)
     return nothing
 end
 
