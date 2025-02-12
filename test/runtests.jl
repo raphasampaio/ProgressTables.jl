@@ -4,6 +4,7 @@ using Aqua
 using Test
 
 include("aqua.jl")
+include("issues.jl")
 
 function test_incremental_progress_table()
     for border in [true, false]
@@ -64,6 +65,12 @@ function test_incremental_separator()
     return nothing
 end
 
+function test_issues()
+    test_issue4()
+
+    return nothing
+end
+
 function test_all()
     @testset "Aqua.jl" begin
         test_aqua()
@@ -75,6 +82,10 @@ function test_all()
 
     @testset "IncrementalSeparator" begin
         test_incremental_separator()
+    end
+
+    @testset "Issues" begin
+        test_issues()
     end
 
     return nothing
