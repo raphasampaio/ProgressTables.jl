@@ -66,7 +66,7 @@ function test_incremental_separator()
 end
 
 function test_issues()
-    test_issue4()
+    test_issue6()
 
     return nothing
 end

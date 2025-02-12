@@ -202,6 +202,9 @@ function next(
             remaining = width - length(string)
             suffix_spacing = floor(Int, remaining / 2)
             prefix_spacing = width - length(string) - suffix_spacing
+            if prefix_spacing < 0
+                throw(ArgumentError("Increase width of column $i to fit content"))
+            end
             print(io, " "^prefix_spacing)
         end
 

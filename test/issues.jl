@@ -1,9 +1,9 @@
-function test_issue4()
+function test_issue6()
     pt = IncrementalProgressTable(
-        header = ["iter", "lower bound", "upper bound", "gap", "fwd (s)", "bck (s)", "time (s)"],
+        header = ["iter"],
     )
     initialize(pt)
-    next(pt, [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0])
+    @test_throws ArgumentError next(pt, [1.234567890])
     finalize(pt)
 
     return nothing
