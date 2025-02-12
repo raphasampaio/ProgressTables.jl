@@ -9,6 +9,7 @@ export IncrementalProgressTable,
     finalize
 
 include("abstract.jl")
+include("style.jl")
 include("incremental.jl")
 
 end
