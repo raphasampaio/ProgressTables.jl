@@ -39,16 +39,26 @@ struct IncrementalProgressTable <: AbstractProgressTable
             size + sum(widths) - 1
         end
 
-        suffix_spacing = Vector{Int}()
+        suffix_spacing = zeros(Int, size)
         for i in 1:size
             remaining = widths[i] - length(header[i])
-            push!(suffix_spacing, floor(Int, remaining / 2))
+            suffix_spacing[i] = floor(Int, remaining / 2)
         end
 
-        prefix_spacing = Vector{Int}()
+        prefix_spacing = zeros(Int, size)
         for i in 1:size
             remaining = widths[i] - length(header[i])
-            push!(prefix_spacing, remaining - suffix_spacing[i])
+            prefix_spacing[i] = remaining - suffix_spacing[i]
+        end
+
+        for i in 1:size
+            if prefix_spacing[i] < 0
+                throw(ArgumentError("Increase width of column $(header[i]) to fit content"))
+            end
+
+            if suffix_spacing[i] < 0
+                throw(ArgumentError("Increase width of column $(header[i]) to fit content"))
+            end
         end
 
         style = (
@@ -203,7 +213,7 @@ function next(
             suffix_spacing = floor(Int, remaining / 2)
             prefix_spacing = width - length(string) - suffix_spacing
             if prefix_spacing < 0
-                throw(ArgumentError("Increase width of column $i to fit content"))
+                throw(ArgumentError("Increase width of column $(progress_table.header[i]) to fit content"))
             end
             print(io, " "^prefix_spacing)
         end
