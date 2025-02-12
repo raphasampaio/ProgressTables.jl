@@ -8,4 +8,4 @@ Base.finalize(progress_table::AbstractProgressTable) = finalize(stdout, progress
 abstract type AbstractSeparator end
 
 next!(p::AbstractSeparator) = next!(stdout, p)
-done!(p::AbstractSeparator) = done!(stdout, p)
+finalize!(p::AbstractSeparator) = finalize!(stdout, p)

@@ -3,11 +3,13 @@ module ProgressTables
 using Printf
 
 export IncrementalProgressTable,
-    IncrementalProgressBar,
+    IncrementalSeparator,
     initialize,
     next,
+    next!,
     separator,
-    finalize
+    finalize,
+    finalize!
 
 include("abstract.jl")
 include("style.jl")
