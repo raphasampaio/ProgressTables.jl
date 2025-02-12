@@ -99,7 +99,7 @@ struct IncrementalProgressTable <: AbstractProgressTable
             width,
             prefix_spacing,
             suffix_spacing,
-            String(take!(separator_io))
+            String(take!(separator_io)),
         )
     end
 end

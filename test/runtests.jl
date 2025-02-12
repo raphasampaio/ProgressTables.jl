@@ -5,11 +5,7 @@ using Test
 
 include("aqua.jl")
 
-function test_all()
-    @testset "Aqua.jl" begin
-        test_aqua()
-    end
-
+function test_incremental_progress_table()
     for border in [true, false]
         io = IOBuffer()
 
@@ -45,6 +41,40 @@ function test_all()
             @test output ==
                   "    Epoch │  Loss  │ Accuracy       \n──────────┼────────┼────────────────\n        1 │  1.00  │ 1.000e-01      \n        2 │  0.50  │ 2.000e-01      \n──────────┼────────┼────────────────\n        3 │  0.33  │ 3.000e-01      \n        4 │  0.25  │ 4.000e-01      \n"
         end
+    end
+
+    return nothing
+end
+
+function test_incremental_separator()
+    io = IOBuffer()
+
+    separator = IncrementalSeparator("Hello, World!", 5)
+
+    for _ in 1:5
+        next!(io, separator)
+    end
+    finalize!(io, separator)
+
+    @show output = String(take!(io))
+    print(output)
+
+    @test output == "Hello, World!"
+
+    return nothing
+end
+
+function test_all()
+    @testset "Aqua.jl" begin
+        test_aqua()
+    end
+
+    @testset "ProgressTables.jl" begin
+        test_incremental_progress_table()
+    end
+
+    @testset "IncrementalSeparator" begin
+        test_incremental_separator()
     end
 
     return nothing
