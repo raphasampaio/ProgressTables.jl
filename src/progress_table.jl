@@ -1,27 +1,20 @@
-struct ProgressTable <: AbstractProgressTable
-    header::Vector{String}
-    widths::Vector{Int}
-    format::Vector{Printf.Format}
-    border::Bool
-
-    header_alignment::Vector{Symbol}
-    header_bold::Vector{Bool}
-    # header_italic::Vector{Bool}
-    header_underline::Vector{Bool}
-    header_blink::Vector{Bool}
-    header_reverse::Vector{Bool}
-    header_hidden::Vector{Bool}
-    header_color::Vector{Symbol}
-
+@kwdef struct Style
     alignment::Vector{Symbol}
     bold::Vector{Bool}
-    # italic::Vector{Bool}
+    italic::Vector{Bool}
     underline::Vector{Bool}
     blink::Vector{Bool}
     reverse::Vector{Bool}
     hidden::Vector{Bool}
     color::Vector{Symbol}
+end
 
+struct ProgressTable <: AbstractProgressTable
+    header::Vector{String}
+    widths::Vector{Int}
+    format::Vector{Printf.Format}
+    border::Bool
+    style::@NamedTuple{header::Style, body::Style}
     width::Int
     prefix_spacing::Vector{Int}
     suffix_spacing::Vector{Int}
@@ -33,7 +26,7 @@ struct ProgressTable <: AbstractProgressTable
         border::Bool = true,
         header_alignment::Vector{Symbol} = [:center for _ in header],
         header_bold::Vector{Bool} = [true for _ in header],
-        # header_italic::Vector{Bool} = [false for _ in header],
+        header_italic::Vector{Bool} = [false for _ in header],
         header_underline::Vector{Bool} = [false for _ in header],
         header_blink::Vector{Bool} = [false for _ in header],
         header_reverse::Vector{Bool} = [false for _ in header],
@@ -41,7 +34,7 @@ struct ProgressTable <: AbstractProgressTable
         header_color::Vector{Symbol} = [:normal for _ in header],
         alignment::Vector{Symbol} = [:center for _ in header],
         bold::Vector{Bool} = [false for _ in header],
-        # italic::Vector{Bool} = [false for _ in header],
+        italic::Vector{Bool} = [false for _ in header],
         underline::Vector{Bool} = [false for _ in header],
         blink::Vector{Bool} = [false for _ in header],
         reverse::Vector{Bool} = [false for _ in header],
@@ -68,27 +61,35 @@ struct ProgressTable <: AbstractProgressTable
             push!(prefix_spacing, remaining - suffix_spacing[i])
         end
 
+        style = (
+            header = Style(
+                alignment = header_alignment,
+                bold = header_bold,
+                italic = header_italic,
+                underline = header_underline,
+                blink = header_blink,
+                reverse = header_reverse,
+                hidden = header_hidden,
+                color = header_color,
+            ),
+            body = Style(
+                alignment = alignment,
+                bold = bold,
+                italic = italic,
+                underline = underline,
+                blink = blink,
+                reverse = reverse,
+                hidden = hidden,
+                color = color,
+            ),
+        )
+
         return new(
             header,
             widths,
             [Printf.Format(fmt) for fmt in format],
             border,
-            header_alignment,
-            header_bold,
-            # header_italic,
-            header_underline,
-            header_blink,
-            header_reverse,
-            header_hidden,
-            header_color,
-            alignment,
-            bold,
-            # italic,
-            underline,
-            blink,
-            reverse,
-            hidden,
-            color,
+            style,
             width,
             prefix_spacing,
             suffix_spacing,
@@ -118,7 +119,7 @@ function initialize(io::IO, progress_table::ProgressTable)
 
     for (i, column) in enumerate(progress_table.header)
         width = progress_table.widths[i]
-        alignment = progress_table.header_alignment[i]
+        alignment = progress_table.style.header.alignment[i]
 
         if alignment == :left
             print(io, " ")
@@ -131,13 +132,13 @@ function initialize(io::IO, progress_table::ProgressTable)
         printstyled(
             io,
             column,
-            bold = progress_table.header_bold[i],
-            # italic = progress_table.header_italic[i],
-            underline = progress_table.header_underline[i],
-            blink = progress_table.header_blink[i],
-            reverse = progress_table.header_reverse[i],
-            hidden = progress_table.header_hidden[i],
-            color = progress_table.header_color[i],
+            bold = progress_table.style.header.bold[i],
+            # italic = progress_table.style.header.italic[i],
+            underline = progress_table.style.header.underline[i],
+            blink = progress_table.style.header.blink[i],
+            reverse = progress_table.style.header.reverse[i],
+            hidden = progress_table.style.header.hidden[i],
+            color = progress_table.style.header.color[i],
         )
 
         if alignment == :left
@@ -168,14 +169,14 @@ function next(
     io::IO,
     progress_table::ProgressTable,
     row::AbstractVector;
-    alignment::Vector{Symbol} = progress_table.alignment,
-    bold::Vector{Bool} = progress_table.bold,
-    # italic::Vector{Bool} = progress_table.italic,
-    underline::Vector{Bool} = progress_table.underline,
-    blink::Vector{Bool} = progress_table.blink,
-    reverse::Vector{Bool} = progress_table.reverse,
-    hidden::Vector{Bool} = progress_table.hidden,
-    color::Vector{Symbol} = progress_table.color,
+    alignment::Vector{Symbol} = progress_table.style.body.alignment,
+    bold::Vector{Bool} = progress_table.style.body.bold,
+    italic::Vector{Bool} = progress_table.style.body.italic,
+    underline::Vector{Bool} = progress_table.style.body.underline,
+    blink::Vector{Bool} = progress_table.style.body.blink,
+    reverse::Vector{Bool} = progress_table.style.body.reverse,
+    hidden::Vector{Bool} = progress_table.style.body.hidden,
+    color::Vector{Symbol} = progress_table.style.body.color,
 )
     size = length(progress_table.widths)
 
