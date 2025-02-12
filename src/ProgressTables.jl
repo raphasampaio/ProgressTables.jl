@@ -2,13 +2,13 @@ module ProgressTables
 
 using Printf
 
-export ProgressTable,
+export IncrementalProgressTable,
     initialize,
     next,
     separator,
     finalize
 
 include("abstract.jl")
-include("progress_table.jl")
+include("incremental.jl")
 
 end

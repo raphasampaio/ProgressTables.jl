@@ -9,7 +9,7 @@
     color::Vector{Symbol}
 end
 
-struct ProgressTable <: AbstractProgressTable
+struct IncrementalProgressTable <: AbstractProgressTable
     header::Vector{String}
     widths::Vector{Int}
     format::Vector{Printf.Format}
@@ -19,7 +19,7 @@ struct ProgressTable <: AbstractProgressTable
     prefix_spacing::Vector{Int}
     suffix_spacing::Vector{Int}
 
-    function ProgressTable(;
+    function IncrementalProgressTable(;
         header::Vector{String},
         widths::Vector{Int} = [length(column) + 2 for column in header],
         format::Vector{String} = ["%f" for _ in header],
@@ -97,12 +97,7 @@ struct ProgressTable <: AbstractProgressTable
     end
 end
 
-initialize(progress_table::ProgressTable) = initialize(stdout, progress_table)
-next(progress_table::ProgressTable, row::AbstractVector; kwargs...) = next(stdout, progress_table, row; kwargs...)
-separator(progress_table::ProgressTable) = separator(stdout, progress_table)
-Base.finalize(progress_table::ProgressTable) = finalize(stdout, progress_table)
-
-function initialize(io::IO, progress_table::ProgressTable)
+function initialize(io::IO, progress_table::IncrementalProgressTable)
     size = length(progress_table.widths)
 
     if progress_table.border
@@ -167,7 +162,7 @@ end
 
 function next(
     io::IO,
-    progress_table::ProgressTable,
+    progress_table::IncrementalProgressTable,
     row::AbstractVector;
     alignment::Vector{Symbol} = progress_table.style.body.alignment,
     bold::Vector{Bool} = progress_table.style.body.bold,
@@ -240,7 +235,7 @@ function next(
     return nothing
 end
 
-function separator(io::IO, progress_table::ProgressTable)
+function separator(io::IO, progress_table::IncrementalProgressTable)
     size = length(progress_table.widths)
 
     if progress_table.border
@@ -263,7 +258,7 @@ function separator(io::IO, progress_table::ProgressTable)
     return nothing
 end
 
-function Base.finalize(io::IO, progress_table::ProgressTable)
+function Base.finalize(io::IO, progress_table::IncrementalProgressTable)
     size = length(progress_table.widths)
 
     if progress_table.border

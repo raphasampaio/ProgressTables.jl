@@ -13,7 +13,7 @@ function test_all()
     for border in [true, false]
         io = IOBuffer()
 
-        pt = ProgressTable(
+        pt = IncrementalProgressTable(
             header = ["Epoch", "Loss", "Accuracy"],
             widths = [10, 8, 16],
             format = ["%d", "%.2f", "%.3e"],
