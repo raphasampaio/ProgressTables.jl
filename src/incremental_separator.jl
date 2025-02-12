@@ -9,6 +9,10 @@ mutable struct IncrementalSeparator
     end
 end
 
+function IncrementalSeparator(progress_table::IncrementalProgressTable, max_steps::Integer)
+    return IncrementalSeparator(progress_table.separator, max_steps)
+end
+
 function next!(io::IO, separator::IncrementalSeparator)
     if separator.current_step < separator.max_steps
         separator.current_step += 1
