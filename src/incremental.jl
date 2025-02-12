@@ -1,15 +1,4 @@
-@kwdef struct Style
-    alignment::Vector{Symbol}
-    bold::Vector{Bool}
-    italic::Vector{Bool}
-    underline::Vector{Bool}
-    blink::Vector{Bool}
-    reverse::Vector{Bool}
-    hidden::Vector{Bool}
-    color::Vector{Symbol}
-end
-
-struct ProgressTable <: AbstractProgressTable
+struct IncrementalProgressTable <: AbstractProgressTable
     header::Vector{String}
     widths::Vector{Int}
     format::Vector{Printf.Format}
@@ -18,8 +7,9 @@ struct ProgressTable <: AbstractProgressTable
     width::Int
     prefix_spacing::Vector{Int}
     suffix_spacing::Vector{Int}
+    separator::String
 
-    function ProgressTable(;
+    function IncrementalProgressTable(;
         header::Vector{String},
         widths::Vector{Int} = [length(column) + 2 for column in header],
         format::Vector{String} = ["%f" for _ in header],
@@ -84,6 +74,22 @@ struct ProgressTable <: AbstractProgressTable
             ),
         )
 
+        separator_io = IOBuffer()
+        if border
+            print(separator_io, "├")
+        end
+        for (i, width) in enumerate(widths)
+            print(separator_io, "─"^width)
+            if i != size
+                print(separator_io, "┼")
+            end
+        end
+        if border
+            println(separator_io, "┤")
+        else
+            println(separator_io)
+        end
+
         return new(
             header,
             widths,
@@ -93,16 +99,12 @@ struct ProgressTable <: AbstractProgressTable
             width,
             prefix_spacing,
             suffix_spacing,
+            String(take!(separator_io))
         )
     end
 end
 
-initialize(progress_table::ProgressTable) = initialize(stdout, progress_table)
-next(progress_table::ProgressTable, row::AbstractVector; kwargs...) = next(stdout, progress_table, row; kwargs...)
-separator(progress_table::ProgressTable) = separator(stdout, progress_table)
-Base.finalize(progress_table::ProgressTable) = finalize(stdout, progress_table)
-
-function initialize(io::IO, progress_table::ProgressTable)
+function initialize(io::IO, progress_table::IncrementalProgressTable)
     size = length(progress_table.widths)
 
     if progress_table.border
@@ -167,7 +169,7 @@ end
 
 function next(
     io::IO,
-    progress_table::ProgressTable,
+    progress_table::IncrementalProgressTable,
     row::AbstractVector;
     alignment::Vector{Symbol} = progress_table.style.body.alignment,
     bold::Vector{Bool} = progress_table.style.body.bold,
@@ -240,30 +242,12 @@ function next(
     return nothing
 end
 
-function separator(io::IO, progress_table::ProgressTable)
-    size = length(progress_table.widths)
-
-    if progress_table.border
-        print(io, "├")
-    end
-
-    for (i, width) in enumerate(progress_table.widths)
-        print(io, "─"^width)
-        if i != size
-            print(io, "┼")
-        end
-    end
-
-    if progress_table.border
-        println(io, "┤")
-    else
-        println(io)
-    end
-
+function separator(io::IO, progress_table::IncrementalProgressTable)
+    print(io, progress_table.separator)
     return nothing
 end
 
-function Base.finalize(io::IO, progress_table::ProgressTable)
+function Base.finalize(io::IO, progress_table::IncrementalProgressTable)
     size = length(progress_table.widths)
 
     if progress_table.border
