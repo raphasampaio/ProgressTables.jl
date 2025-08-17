@@ -4,7 +4,7 @@ using ProgressTables
 using Test
 
 @testset "Incremental Progress Table" begin
- for border in [true, false]
+    for border in [true, false]
         io = IOBuffer()
 
         pt = IncrementalProgressTable(
