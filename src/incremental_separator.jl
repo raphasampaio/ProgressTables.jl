@@ -29,7 +29,7 @@ end
 function Base.finalize(io::IO, separator::IncrementalSeparator)
     if separator.current_step < separator.max_steps
         from = div(separator.string_length * separator.current_step, separator.max_steps) + 1
-        print(io, separator.separator[from:end])
+        print(io, separator.string[from:end])
     end
     println(io)
 

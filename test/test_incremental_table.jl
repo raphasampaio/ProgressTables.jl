@@ -29,8 +29,7 @@ using Test
         end
         finalize(io, pt)
 
-        @show output = String(take!(io))
-        print(output)
+        output = String(take!(io))
 
         if border
             @test output ==

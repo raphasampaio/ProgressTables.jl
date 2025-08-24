@@ -14,10 +14,8 @@ using Test
         end
         finalize(io, separator)
 
-        @show output = String(take!(io))
-        print(output)
-
-        @test output == "Hello, World!"
+        output = String(take!(io))
+        @test output == "Hello, World!\n"
     end
 
     @testset "string < max_steps" begin
@@ -29,6 +27,9 @@ using Test
             next(io, separator)
         end
         finalize(io, separator)
+
+        output = String(take!(io))
+        @test output == "Hello, World!\n"
     end
 end
 
