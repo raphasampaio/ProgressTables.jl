@@ -17,9 +17,8 @@ function next(io::IO, separator::IncrementalSeparator)
     if separator.current_step < separator.max_steps
         separator.current_step += 1
 
-        @show from = div(separator.string_length * (separator.current_step - 1), separator.max_steps) + 1
-        @show to = div(separator.string_length * separator.current_step, separator.max_steps)
-        @show separator.string
+        from = div(separator.string_length * (separator.current_step - 1), separator.max_steps) + 1
+        to = div(separator.string_length * separator.current_step, separator.max_steps)
 
         print(io, separator.string[from:to])
     end

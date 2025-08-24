@@ -14,6 +14,11 @@ function recursive_include(path::String)
     end
 end
 
-@testset verbose = true failfast = true "ProgressTables" begin
-    recursive_include(@__DIR__)
+@testset verbose = true failfast = true begin
+    if length(ARGS) > 0
+        @show joinpath(@__DIR__, ARGS[1])
+        include(joinpath(@__DIR__, ARGS[1]))
+    else
+        recursive_include(@__DIR__)
+    end
 end
