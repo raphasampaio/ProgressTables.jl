@@ -9,9 +9,9 @@ using Test
     separator = IncrementalSeparator("Hello, World!", 5)
 
     for _ in 1:5
-        next!(io, separator)
+        next(io, separator)
     end
-    finalize!(io, separator)
+    finalize(io, separator)
 
     @show output = String(take!(io))
     print(output)

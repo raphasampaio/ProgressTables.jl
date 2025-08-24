@@ -1,9 +1,9 @@
-module TestIncrementalProgressTable
+module TestIncrementalTable
 
 using ProgressTables
 using Test
 
-@testset "Incremental Progress Table" begin
+@testset "Incremental Table" begin
     for border in [true, false]
         io = IOBuffer()
 

@@ -6,10 +6,8 @@ export IncrementalProgressTable,
     IncrementalSeparator,
     initialize,
     next,
-    next!,
     separator,
-    finalize,
-    finalize!
+    finalize
 
 include("abstract.jl")
 include("style.jl")

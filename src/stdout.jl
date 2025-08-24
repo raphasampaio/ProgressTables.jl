@@ -18,12 +18,12 @@ function Base.finalize(progress_table::AbstractProgressTable)
     return nothing
 end
 
-function next!(separator::AbstractSeparator)
-    ProgressTables.next!(stdout, separator)
+function next(separator::AbstractSeparator)
+    ProgressTables.next(stdout, separator)
     return nothing
 end
 
-function finalize!(separator::AbstractSeparator)
-    ProgressTables.finalize!(stdout, separator)
+function Base.finalize(separator::AbstractSeparator)
+    ProgressTables.finalize(stdout, separator)
     return nothing
 end
