@@ -10,7 +10,7 @@ using Test
 
         separator = IncrementalSeparator(string, max_steps)
         for _ in 1:max_steps
-            next(io, separator)
+            next!(io, separator)
         end
         finalize(io, separator)
 

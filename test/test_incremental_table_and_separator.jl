@@ -26,7 +26,7 @@ using Test
         if epoch == 2
             sp = IncrementalSeparator(pt, max_steps)
             for _ in 1:max_steps
-                next(io, sp)
+                next!(io, sp)
             end
             finalize(io, sp)
         end

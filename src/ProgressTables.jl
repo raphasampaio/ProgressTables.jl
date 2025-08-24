@@ -6,6 +6,7 @@ export IncrementalProgressTable,
     IncrementalSeparator,
     initialize,
     next,
+    next!,
     separator,
     finalize
 

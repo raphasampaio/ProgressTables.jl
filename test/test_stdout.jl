@@ -10,9 +10,9 @@ using Test
     @test initialize(pt) === nothing
     @test next(pt, [1]) === nothing
     @test separator(pt) === nothing
-    @test finalize(pt) === nothing
-    @test next(sp) === nothing
+    @test next!(sp) === nothing
     @test finalize(sp) === nothing
+    @test finalize(pt) === nothing
 end
 
 end
