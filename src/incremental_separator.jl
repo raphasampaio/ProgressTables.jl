@@ -9,8 +9,8 @@ mutable struct IncrementalSeparator <: AbstractSeparator
     end
 end
 
-function IncrementalSeparator(progress_table::IncrementalProgressTable)
-    return IncrementalSeparator(progress_table.separator, progress_table.width)
+function IncrementalSeparator(progress_table::IncrementalProgressTable, max_steps::Integer)
+    return IncrementalSeparator(progress_table.separator, max_steps)
 end
 
 function next(io::IO, separator::IncrementalSeparator)
@@ -31,6 +31,8 @@ function Base.finalize(io::IO, separator::IncrementalSeparator)
         from = div(separator.string_length * separator.current_step, separator.max_steps) + 1
         print(io, separator.separator[from:end])
     end
+    println(io)
+
     separator.current_step = separator.max_steps
 
     return nothing
