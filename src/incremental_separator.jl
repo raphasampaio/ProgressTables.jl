@@ -22,7 +22,9 @@ function next(io::IO, separator::IncrementalSeparator)
 
         # Convert character indices to byte indices for proper Unicode handling
         from_byte = from_char == 1 ? 1 : nextind(separator.string, 0, from_char)
-        to_byte = to_char == separator.string_length ? lastindex(separator.string) : prevind(separator.string, nextind(separator.string, 0, to_char + 1))
+        to_byte =
+            to_char == separator.string_length ? lastindex(separator.string) :
+            prevind(separator.string, nextind(separator.string, 0, to_char + 1))
 
         print(io, separator.string[from_byte:to_byte])
     end
