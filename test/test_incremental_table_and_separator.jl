@@ -4,6 +4,8 @@ using ProgressTables
 using Test
 
 @testset "Incremental Table And Separator" begin
+    io = IOBuffer()
+
     pt = IncrementalProgressTable(
         header = ["Epoch", "Loss", "Accuracy"],
         widths = [10, 8, 16],
@@ -17,21 +19,22 @@ using Test
     epochs = 4
     max_steps = 5
 
-    initialize(pt)
+    initialize(io, pt)
     for epoch in 1:epochs
-        next(pt, [epoch, 1 / epoch, epoch * 0.1])
+        next(io, pt, [epoch, 1 / epoch, epoch * 0.1])
 
         if epoch == 2
-            # sp = IncrementalSeparator(pt, max_steps)
-            sp = IncrementalSeparator("└──────────┴────────┴────────────────┘", max_steps)
+            sp = IncrementalSeparator(pt, max_steps)
             for _ in 1:max_steps
-                next(sp)
-                sleep(1)
+                next(io, sp)
             end
-            finalize(sp)
+            finalize(io, sp)
         end
     end
-    finalize(pt)
+    finalize(io, pt)
+
+    output = String(take!(io))
+    @test output == "┌──────────┬────────┬────────────────┐\n│    Epoch │  Loss  │ Accuracy       │\n├──────────┼────────┼────────────────┤\n│        1 │  1.00  │ 1.000e-01      │\n│        2 │  0.50  │ 2.000e-01      │\n├──────────┼────────┼────────────────┤\n│        3 │  0.33  │ 3.000e-01      │\n│        4 │  0.25  │ 4.000e-01      │\n└──────────┴────────┴────────────────┘\n"
 
     return nothing
 end

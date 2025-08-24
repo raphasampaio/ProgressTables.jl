@@ -95,9 +95,7 @@ struct IncrementalProgressTable <: AbstractProgressTable
             end
         end
         if border
-            println(separator_io, "┤")
-        else
-            println(separator_io)
+            print(separator_io, "┤")
         end
 
         return new(
@@ -256,7 +254,7 @@ function next(
 end
 
 function separator(io::IO, progress_table::IncrementalProgressTable)
-    print(io, progress_table.separator)
+    println(io, progress_table.separator)
     return nothing
 end
 

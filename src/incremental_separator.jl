@@ -17,10 +17,14 @@ function next(io::IO, separator::IncrementalSeparator)
     if separator.current_step < separator.max_steps
         separator.current_step += 1
 
-        from = div(separator.string_length * (separator.current_step - 1), separator.max_steps) + 1
-        to = div(separator.string_length * separator.current_step, separator.max_steps)
+        from_char = div(separator.string_length * (separator.current_step - 1), separator.max_steps) + 1
+        to_char = div(separator.string_length * separator.current_step, separator.max_steps)
 
-        print(io, separator.string[from:to])
+        # Convert character indices to byte indices for proper Unicode handling
+        from_byte = from_char == 1 ? 1 : nextind(separator.string, 0, from_char)
+        to_byte = to_char == separator.string_length ? lastindex(separator.string) : prevind(separator.string, nextind(separator.string, 0, to_char + 1))
+
+        print(io, separator.string[from_byte:to_byte])
     end
 
     return nothing
@@ -28,8 +32,10 @@ end
 
 function Base.finalize(io::IO, separator::IncrementalSeparator)
     if separator.current_step < separator.max_steps
-        from = div(separator.string_length * separator.current_step, separator.max_steps) + 1
-        print(io, separator.string[from:end])
+        from_char = div(separator.string_length * separator.current_step, separator.max_steps) + 1
+        # Convert character index to byte index for proper Unicode handling
+        from_byte = from_char == 1 ? 1 : nextind(separator.string, 0, from_char)
+        print(io, separator.string[from_byte:end])
     end
     println(io)
 
