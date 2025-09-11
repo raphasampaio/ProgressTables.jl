@@ -13,7 +13,7 @@ ProgressTables.jl is a Julia package designed to display progress and track valu
 ### Installation
 
 ```julia
-julia> ] add ProgressTables
+pkg> add ProgressTables
 ```
 
 ### Example
